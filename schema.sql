@@ -165,3 +165,76 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-09-10 13:58:21
+
+-- Procedimiento 1: Reporte diario por doctor
+DROP PROCEDURE IF EXISTS GetDailyAppointmentReportByDoctor;
+DELIMITER $
+CREATE PROCEDURE GetDailyAppointmentReportByDoctor(
+    IN report_date DATE
+)
+BEGIN
+    SELECT 
+        d.name AS doctor_name,
+        a.appointment_time,
+        a.status,
+        p.name AS patient_name,
+        p.phone AS patient_phone
+    FROM 
+        appointments a
+    JOIN 
+        doctor d ON a.doctor_id = d.id
+    JOIN 
+        patients p ON a.patient_id = p.id
+    WHERE 
+        DATE(a.appointment_time) = report_date
+    ORDER BY 
+        d.name, a.appointment_time;
+END$
+DELIMITER ;
+
+-- Procedimiento 2: Doctor con más pacientes por mes
+DROP PROCEDURE IF EXISTS GetDoctorWithMostPatientsByMonth;
+DELIMITER $
+CREATE PROCEDURE GetDoctorWithMostPatientsByMonth(
+    IN input_month INT, 
+    IN input_year INT
+)
+BEGIN
+    SELECT
+        doctor_id, 
+        COUNT(patient_id) AS patients_seen
+    FROM
+        appointments
+    WHERE
+        MONTH(appointment_time) = input_month 
+        AND YEAR(appointment_time) = input_year
+    GROUP BY
+        doctor_id
+    ORDER BY
+        patients_seen DESC
+    LIMIT 1;
+END $
+DELIMITER ;
+
+-- Procedimiento 3: Doctor con más pacientes por año
+DROP PROCEDURE IF EXISTS GetDoctorWithMostPatientsByYear;
+DELIMITER $
+CREATE PROCEDURE GetDoctorWithMostPatientsByYear(
+    IN input_year INT
+)
+BEGIN
+    SELECT
+        doctor_id, 
+        COUNT(patient_id) AS patients_seen
+    FROM
+        appointments
+    WHERE
+        YEAR(appointment_time) = input_year
+    GROUP BY
+        doctor_id
+    ORDER BY
+        patients_seen DESC
+    LIMIT 1;
+END $
+DELIMITER ;
+
