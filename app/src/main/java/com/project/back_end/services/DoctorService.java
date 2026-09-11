@@ -36,7 +36,7 @@ public class DoctorService {
         }
 
         Doctor doctor = doctorOpt.get();
-        List<String> allSlots = doctor.getAvailability() != null ? doctor.getAvailability() : Collections.emptyList();
+        List<String> allSlots = doctor.getAvailableTimes() != null ? doctor.getAvailableTimes() : Collections.emptyList();
 
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
@@ -168,8 +168,8 @@ public class DoctorService {
         }
 
         return doctors.stream().filter(doc -> {
-            if (doc.getAvailability() == null) return false;
-            return doc.getAvailability().stream().anyMatch(slot -> {
+            if (doc.getAvailableTimes() == null) return false;
+            return doc.getAvailableTimes().stream().anyMatch(slot -> {
                 try {
                     int hour = Integer.parseInt(slot.split(":")[0]);
                     if ("AM".equalsIgnoreCase(amOrPm)) {
