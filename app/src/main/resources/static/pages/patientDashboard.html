@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel del Paciente</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/logo.png">
+
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="../assets/css/adminDashboard.css" />
+    <link rel="stylesheet" href="../assets/css/style.css" />
+    <link rel="stylesheet" href="../assets/css/patientDashboard.css" />
+
+    <!-- JS Utilities, Components & Modals -->
+    <script src="../js/render.js" defer></script>
+    <script src="../js/util.js" defer></script>
+    <script src="../js/components/header.js" defer></script>
+    <script src="../js/components/footer.js" defer></script>
+    <script type="module" src="../js/components/modals.js"></script>
+</head>
+<body onload="renderContent()">
+
+    <div class="container">
+        <div class="wrapper">
+            <!-- Header Placeholder -->
+            <div id="header"></div>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <!-- Search Bar -->
+                <input type="text" id="searchBar" class="searchBar" placeholder="Barra de búsqueda para salida personalizada" />
+
+                <!-- Filters Section -->
+                <div class="filter-wrapper">
+                    <select class="filter-select" id="filterTime">
+                        <option value="">Filtrar por tiempo</option>
+                        <option value="AM">Mañana (AM)</option>
+                        <option value="PM">Tarde (PM)</option>
+                    </select>
+
+                    <select class="filter-select" id="filterSpecialty">
+                        <option value="">Todas las especialidades</option>
+                    </select>
+                </div>
+
+                <!-- Doctor Cards Container -->
+                <div id="content"></div>
+            </main>
+
+            <!-- Footer Placeholder -->
+            <div id="footer"></div>
+        </div>
+    </div>
+
+    <!-- Reusable Modal Markup -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Page Logic Script -->
+    <script type="module" src="../js/patientDashboard.js" defer></script>
+</body>
+</html>

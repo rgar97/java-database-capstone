@@ -1,0 +1,175 @@
+/* Restablecer y estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    background-color: #f4f7f6;
+    color: #333333;
+}
+
+/* Diseño */
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.main-content h2 {
+    color: #015c5d;
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilo de búsqueda y filtros */
+#searchBar {
+    width: 100%;
+    max-width: 600px;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+    border: 2px solid #015c5d;
+    border-radius: 25px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#searchBar:focus {
+    border-color: #017d7e;
+    box-shadow: 0 0 8px rgba(1, 125, 126, 0.3);
+}
+
+.filter-section {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    max-width: 600px;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter-section input[type="date"] {
+    padding: 0.65rem 1rem;
+    font-size: 0.95rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    outline: none;
+}
+
+#todayAppointmentsBtn, .dashboard-btn {
+    padding: 0.65rem 1.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #015c5d;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+}
+
+#todayAppointmentsBtn:hover, .dashboard-btn:hover {
+    background-color: #017d7e;
+    transform: translateY(-1px);
+}
+
+/* Estilo de la tabla */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+#patientTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    text-align: left;
+}
+
+#patientTable thead {
+    background-color: rgba(1, 92, 93, 0.9);
+    color: #ffffff;
+}
+
+#patientTable th, #patientTable td {
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#patientTable tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+#patientTable tbody tr:hover {
+    background-color: #e9f5f5;
+    transition: background-color 0.2s ease;
+}
+
+/* Extras */
+.prescription-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+    color: #ffffff;
+    background-color: #28a745;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.prescription-btn:hover {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+}
+
+.noPatientRecord {
+    font-style: italic;
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem !important;
+}
+
+/* Diseño responsivo */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+
+    .filter-section {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .filter-section input[type="date"], #todayAppointmentsBtn {
+        width: 100%;
+    }
+
+    #patientTable th, #patientTable td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoctorDashboard</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/images/logo/logo.png}">
+
+    <!-- CSS Links -->
+    <link rel="stylesheet" th:href="@{/assets/css/adminDashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/doctorDashboard.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/style.css}">
+
+    <!-- JS Utilities (Defer) -->
+    <script th:src="@{/js/render.js}" defer></script>
+    <script th:src="@{/js/util.js}" defer></script>
+
+    <!-- JS Components (Defer) -->
+    <script th:src="@{/js/components/header.js}" defer></script>
+    <script th:src="@{/js/components/footer.js}" defer></script>
+    <script th:src="@{/js/components/patientRows.js}" defer></script>
+
+    <!-- JS Services and Main Logic (Defer) -->
+    <script type="module" th:src="@{/js/services/patientServices.js}" defer></script>
+    <script type="module" th:src="@{/js/doctorDashboard.js}" defer></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="wrapper">
+            <!-- Header Placeholder -->
+            <div id="header"></div>
+
+            <!-- Main Doctor Dashboard Content -->
+            <main class="main-content">
+                <h2>Panel de Control - Doctor</h2>
+
+                <!-- Barra de búsqueda -->
+                <input type="text" id="searchBar" class="input-field" placeholder="Buscar paciente por nombre o teléfono..." />
+
+                <!-- Sección de Filtros -->
+                <div class="filter-section">
+                    <button id="todayAppointmentsBtn" class="dashboard-btn">Citas de Hoy</button>
+                    <input type="date" id="filterDate" class="input-field" />
+                </div>
+
+                <!-- Tabla de Registros de Pacientes -->
+                <div class="table-responsive">
+                    <table id="patientTable">
+                        <thead>
+                            <tr>
+                                <th>ID del Paciente</th>
+                                <th>Nombre</th>
+                                <th>Teléfono</th>
+                                <th>Correo Electrónico</th>
+                                <th>Receta</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientTableBody">
+                            <!-- Filas pobladas dinámicamente mediante JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+
+            <!-- Footer Placeholder -->
+            <div id="footer"></div>
+        </div>
+    </div>
+
+</body>
+</html>

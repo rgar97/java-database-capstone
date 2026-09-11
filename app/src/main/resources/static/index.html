@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Management System</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="./assets/images/logo/logo.png">
+    
+    <!-- CSS Links -->
+    <link rel="stylesheet" href="./assets/css/index.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    
+    <!-- JS Utilities (Defer) -->
+    <script src="./js/util.js" defer></script>
+    <script src="./js/render.js" defer></script>
+    
+    <!-- JS Components (Defer) -->
+    <script src="./js/components/header.js" defer></script>
+    <script src="./js/components/footer.js" defer></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="wrapper">
+            <!-- Header Placeholder -->
+            <div id="header"></div>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                <h2>Selecciona tu rol</h2>
+                
+                <div class="role-selection">
+                    <button id="btn-admin" class="btn-role" onclick="selectRole('admin')">Admin</button>
+                    <button id="btn-doctor" class="btn-role" onclick="selectRole('doctor')">Doctor</button>
+                    <button id="btn-patient" class="btn-role" onclick="selectRole('patient')">Paciente</button>
+                </div>
+            </main>
+
+            <!-- Footer Placeholder -->
+            <div id="footer"></div>
+        </div>
+    </div>
+
+    <!-- Modal Oculto -->
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <button id="closeModal">&times; Cerrar</button>
+            <div id="modal-body">
+                <!-- El contenido dinámico se inyectará aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Servicios (Ruta ajustada a ./js para que coincida con la ubicación de index.html) -->
+    <script type="module" src="./js/services/index.js" defer></script>
+</body>
+</html>
