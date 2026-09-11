@@ -1,4 +1,4 @@
-package com.clinic.management.controller;
+package com.project.back_end.mvc;
 
 import com.clinic.management.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
