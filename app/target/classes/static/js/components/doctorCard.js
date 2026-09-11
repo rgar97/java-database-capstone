@@ -1,4 +1,4 @@
-import { getPatientData, deleteDoctor } from "./patientServices.js";
+import { getPatientData, deleteDoctor } from "../services/patientServices.js";
 import { showBookingOverlay } from "./modals.js";
 
 /**

@@ -1,10 +1,10 @@
-package com.project.back_end.service;
+package com.project.back_end.services;
 
 import com.project.back_end.DTO.AppointmentDTO;
 import com.project.back_end.models.Appointment;
 import com.project.back_end.models.Patient;
-import com.project.back_end.re.AppointmentRepository;
-import com.project.back_end.repo.PatientRepository;
+import com.project.back_end.repository.AppointmentRepository;
+import com.project.back_end.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

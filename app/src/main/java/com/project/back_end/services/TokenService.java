@@ -1,8 +1,8 @@
-package com.project.back_end.service;
+package com.project.back_end.services;
 
-import com.project.back_end.model.Admin;
-import com.project.back_end.model.Doctor;
-import com.project.back_end.model.Patient;
+import com.project.back_end.models.Admin;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.models.Patient;
 import com.project.back_end.repository.AdminRepository;
 import com.project.back_end.repository.DoctorRepository;
 import com.project.back_end.repository.PatientRepository;

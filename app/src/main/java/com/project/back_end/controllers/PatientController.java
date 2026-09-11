@@ -1,8 +1,8 @@
 package com.project.back_end.controller;
 
 import com.project.back_end.DTO.Login;
-import com.project.back_end.model.Patient;
-import com.project.back_end.service.PatientService;
+import com.project.back_end.models.Patient;
+import com.project.back_end.services.PatientService;
 import com.project.back_end.service.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
