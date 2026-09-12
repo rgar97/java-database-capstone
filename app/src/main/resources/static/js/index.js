@@ -62,7 +62,7 @@ async function loginByRole(role, form) {
 
         localStorage.setItem("token", data.token);
         localStorage.setItem("userRole", role);
-        window.location.href = `/${role}Dashboard/${encodeURIComponent(data.token)}`;
+        window.location.assign(`/${role}Dashboard?token=${encodeURIComponent(data.token)}`);
     } catch (requestError) {
         console.error("Error al iniciar sesión:", requestError);
         error.textContent = "No se pudo conectar con el servidor.";
