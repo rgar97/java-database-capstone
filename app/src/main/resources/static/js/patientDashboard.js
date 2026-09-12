@@ -1,6 +1,6 @@
 import { createDoctorCard } from "./components/doctorCard.js";
 import { openModal } from "./components/modals.js";
-import { getDoctors, filterDoctors } from "./services/doctorServices.js";
+import { filterDoctors, getDoctors } from "./services/doctorServices.js";
 import { patientLogin, patientSignup } from "./services/patientServices.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -173,12 +173,13 @@ window.loginPatient = async function (event) {
             if (data.token) {
                 localStorage.setItem("token", data.token);
             }
+            localStorage.setItem("userRole", "loggedPatient");
             if (data.id) {
                 localStorage.setItem("patientId", data.id);
             }
 
-            // Redirigir al panel del paciente con sesión iniciada
-            window.location.href = "loggedPatientDashboard.html";
+            // Reutilizar el panel de pacientes para la sesión autenticada
+            window.location.href = "patientDashboard.html";
         } else {
             const errorData = await response.json().catch(() => ({}));
             alert(errorData.message || "Credenciales incorrectas. Verifique su correo y contraseña.");

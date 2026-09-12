@@ -1,6 +1,6 @@
-import { openModal } from "./components/modals.js";
-import { getDoctors, filterDoctors, saveDoctor } from "./services/doctorServices.js";
 import { createDoctorCard } from "./components/doctorCard.js";
+import { closeModal, openModal } from "./components/modals.js";
+import { filterDoctors, getDoctors, saveDoctor } from "./services/doctorServices.js";
 
 // Esperar a que el DOM esté completamente cargado para inicializar la interfaz
 document.addEventListener("DOMContentLoaded", () => {
@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. Configurar oyentes de eventos para búsqueda y filtrado en tiempo real
     const searchBar = document.getElementById("searchBar");
-    const filterTime = document.getElementById("filterTime");
-    const filterSpecialty = document.getElementById("filterSpecialty");
+    const filterTime = document.getElementById("filterTime") || document.getElementById("sortByTime");
+    const filterSpecialty = document.getElementById("filterSpecialty") || document.getElementById("filterBySpecialty");
 
     if (searchBar) searchBar.addEventListener("input", filterDoctorsOnChange);
     if (filterTime) filterTime.addEventListener("change", filterDoctorsOnChange);
@@ -75,8 +75,8 @@ function renderDoctorCards(doctors) {
  */
 async function filterDoctorsOnChange() {
     const searchBar = document.getElementById("searchBar");
-    const filterTime = document.getElementById("filterTime");
-    const filterSpecialty = document.getElementById("filterSpecialty");
+    const filterTime = document.getElementById("filterTime") || document.getElementById("sortByTime");
+    const filterSpecialty = document.getElementById("filterSpecialty") || document.getElementById("filterBySpecialty");
 
     const nameVal = searchBar ? searchBar.value : "";
     const timeVal = filterTime ? filterTime.value : "";
@@ -121,8 +121,8 @@ async function adminAddDoctor(e) {
         specialty: specialtyInput ? specialtyInput.value.trim() : "",
         email: emailInput ? emailInput.value.trim() : "",
         password: passwordInput ? passwordInput.value.trim() : "",
-        mobile: mobileInput ? mobileInput.value.trim() : "",
-        availability: availability
+        phone: mobileInput ? mobileInput.value.trim() : "",
+        availableTimes: availability
     };
 
     // Validar campos obligatorios
@@ -140,8 +140,7 @@ async function adminAddDoctor(e) {
         // Cerrar el modal limpiando el contenedor del modal si aplica
         const modalContainer = document.getElementById("modalContainer") || document.getElementById("modal");
         if (modalContainer) {
-            modalContainer.innerHTML = "";
-            modalContainer.classList.add("hidden");
+            closeModal();
         }
 
         // Limpiar el formulario

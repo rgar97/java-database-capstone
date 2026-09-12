@@ -11,7 +11,7 @@ const PATIENT_API = API_BASE_URL + '/patient';
 export async function patientSignup(data) {
     try {
         // Paso 1: Enviar solicitud POST al endpoint de registro
-        const response = await fetch(`${PATIENT_API}/signup`, {
+        const response = await fetch(PATIENT_API, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ export async function patientLogin(data) {
 export async function getPatientData(token) {
     try {
         // Paso 1: Realizar petición GET enviando el token en el encabezado
-        const response = await fetch(`${PATIENT_API}/getPatient`, {
+        const response = await fetch(`${PATIENT_API}/${encodeURIComponent(token)}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,9 +107,12 @@ export async function getPatientData(token) {
 export async function getPatientAppointments(id, token, user) {
     try {
         // Paso 1: Construir URL de la API dinámicamente según el rol
-        const endpointUrl = user === "doctor"
-            ? `${API_BASE_URL}/doctor/appointments/${id}`
-            : `${PATIENT_API}/appointments/${id}`;
+        if (user !== "patient") {
+            console.warn(`El backend no expone citas para el rol ${user}.`);
+            return null;
+        }
+
+        const endpointUrl = `${PATIENT_API}/${encodeURIComponent(id)}/${encodeURIComponent(token)}`;
 
         // Paso 2: Consultar las citas asociadas
         const response = await fetch(endpointUrl, {
@@ -143,11 +146,8 @@ export async function getPatientAppointments(id, token, user) {
 export async function filterAppointments(condition, name, token) {
     try {
         // Paso 1: Construir parámetros de búsqueda
-        const params = new URLSearchParams();
-        if (condition && condition.trim() !== '') params.append('condition', condition.trim());
-        if (name && name.trim() !== '') params.append('name', name.trim());
-
-        const url = `${PATIENT_API}/appointments/filter?${params.toString()}`;
+        const pathValue = (value) => encodeURIComponent(value && value.trim() !== '' ? value.trim() : 'null');
+        const url = `${PATIENT_API}/filter/${pathValue(condition)}/${pathValue(name)}/${encodeURIComponent(token)}`;
 
         // Paso 2: Realizar la petición filtrada
         const response = await fetch(url, {

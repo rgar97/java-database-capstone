@@ -1,6 +1,7 @@
 package com.project.back_end.controllers;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.back_end.DTO.Login;
 import com.project.back_end.models.Doctor;
+import com.project.back_end.services.AppointmentService;
 import com.project.back_end.services.DoctorService;
 import com.project.back_end.services.Service;
 
@@ -30,6 +32,9 @@ public class DoctorController {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private AppointmentService appointmentService;
 
     @Autowired
     private Service service;
@@ -83,6 +88,27 @@ public class DoctorController {
         } else {
             response.put("message", "Ocurrió un error interno");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/appointments/{date}/{patientName}/{token}")
+    public ResponseEntity<Map<String, Object>> getAppointments(@PathVariable String date,
+                                                               @PathVariable String patientName,
+                                                               @PathVariable String token) {
+        ResponseEntity<Map<String, String>> authResult = service.validateToken(token, "doctor");
+        if (authResult.getStatusCode() != HttpStatus.OK) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "Acceso no autorizado: se requiere rol de médico.");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
+
+        try {
+            LocalDate appointmentDate = LocalDate.parse(date);
+            return new ResponseEntity<>(appointmentService.getAppointment(patientName, appointmentDate, token), HttpStatus.OK);
+        } catch (DateTimeParseException exception) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "La fecha de las citas no es válida.");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 

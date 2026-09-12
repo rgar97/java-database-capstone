@@ -1,5 +1,5 @@
-import { getAllAppointments } from "./services/appointmentRecordService.js";
 import { createPatientRow } from "./components/patientRows.js";
+import { getAllAppointments } from "./services/appointmentRecordService.js";
 
 // Inicializar Variables Globales
 let patientTableBody = null;
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     patientTableBody = document.getElementById("patientTableBody");
 
     // Configurar el selector de fecha con la fecha de hoy por defecto
-    const datePicker = document.getElementById("datePicker");
+    const datePicker = document.getElementById("datePicker") || document.getElementById("filterDate");
     if (datePicker) {
         datePicker.value = selectedDate;
         datePicker.addEventListener("change", (e) => {
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Botón de "Citas de Hoy"
-    const todayButton = document.getElementById("todayButton");
+    const todayButton = document.getElementById("todayButton") || document.getElementById("todayAppointmentsBtn");
     if (todayButton) {
         todayButton.addEventListener("click", () => {
             selectedDate = new Date().toISOString().split("T")[0];

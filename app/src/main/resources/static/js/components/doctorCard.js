@@ -1,4 +1,4 @@
-import { getPatientData, deleteDoctor } from "../services/patientServices.js";
+import { deleteDoctor, getPatientData } from "../services/patientServices.js";
 import { showBookingOverlay } from "./modals.js";
 
 /**
@@ -55,11 +55,11 @@ export function createDoctorCard(doctor) {
 
             const token = localStorage.getItem("token");
             try {
-                const success = await deleteDoctor(doctor.id, token);
-                if (success) {
+                const result = await deleteDoctor(doctor.id, token);
+                if (result.success) {
                     card.remove();
                 } else {
-                    alert("Error al eliminar el doctor. Inténtalo de nuevo.");
+                    alert(result.message || "Error al eliminar el doctor. Inténtalo de nuevo.");
                 }
             } catch (error) {
                 console.error("Error al eliminar el doctor:", error);

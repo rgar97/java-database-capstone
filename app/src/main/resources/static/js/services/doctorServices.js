@@ -33,12 +33,9 @@ export async function getDoctors() {
  */
 export async function deleteDoctor(id, token) {
     try {
-        const response = await fetch(`${DOCTOR_API}/${id}`, {
+        const response = await fetch(`${DOCTOR_API}/${encodeURIComponent(id)}/${encodeURIComponent(token)}`, {
             method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
 
         if (response.ok) {
@@ -71,12 +68,9 @@ export async function deleteDoctor(id, token) {
  */
 export async function saveDoctor(doctor, token) {
     try {
-        const response = await fetch(DOCTOR_API, {
+        const response = await fetch(`${DOCTOR_API}/${encodeURIComponent(token)}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(doctor)
         });
 
@@ -112,14 +106,8 @@ export async function saveDoctor(doctor, token) {
  */
 export async function filterDoctors(name, time, specialty) {
     try {
-        const params = new URLSearchParams();
-
-        if (name && name.trim() !== '') params.append('name', name.trim());
-        if (time && time.trim() !== '') params.append('time', time.trim());
-        if (specialty && specialty.trim() !== '') params.append('specialty', specialty.trim());
-
-        const queryString = params.toString();
-        const url = queryString ? `${DOCTOR_API}/filter?${queryString}` : DOCTOR_API;
+        const pathValue = (value) => encodeURIComponent(value && value.trim() !== '' ? value.trim() : 'null');
+        const url = `${DOCTOR_API}/filter/${pathValue(name)}/${pathValue(time)}/${pathValue(specialty)}`;
 
         const response = await fetch(url, {
             method: 'GET',
