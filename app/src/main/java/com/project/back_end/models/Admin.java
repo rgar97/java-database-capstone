@@ -1,12 +1,14 @@
 package com.project.back_end.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "admin")
@@ -17,10 +19,12 @@ public class Admin {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
+    @NotBlank(message = "El nombre de usuario es requerido")
     private String username;
 
     @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotBlank(message = "La contraseña es requerida")
     private String password;
 
     // Constructor vacío requerido por JPA

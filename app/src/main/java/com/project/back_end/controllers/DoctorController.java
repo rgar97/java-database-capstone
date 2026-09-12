@@ -1,18 +1,28 @@
-package com.project.back_end.controller;
-
-import com.project.back_end.DTO.Login;
-import com.project.back_end.models.Doctor;
-import com.project.back_end.services.DoctorService;
-import com.project.back_end.services.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+package com.project.back_end.controllers;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.project.back_end.DTO.Login;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.services.DoctorService;
+import com.project.back_end.services.Service;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("${api.path}" + "doctor")
@@ -53,7 +63,7 @@ public class DoctorController {
     }
 
     @PostMapping("/{token}")
-    public ResponseEntity<Map<String, String>> saveDoctor(@RequestBody Doctor doctor,
+    public ResponseEntity<Map<String, String>> saveDoctor(@Valid @RequestBody Doctor doctor,
                                                           @PathVariable String token) {
         Map<String, String> response = new HashMap<>();
         ResponseEntity<Map<String, String>> authResult = service.validateToken(token, "admin");
@@ -77,12 +87,12 @@ public class DoctorController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> doctorLogin(@RequestBody Login login) {
+    public ResponseEntity<Map<String, String>> doctorLogin(@Valid @RequestBody Login login) {
         return doctorService.validateDoctor(login);
     }
 
     @PutMapping("/{token}")
-    public ResponseEntity<Map<String, String>> updateDoctor(@RequestBody Doctor doctor,
+    public ResponseEntity<Map<String, String>> updateDoctor(@Valid @RequestBody Doctor doctor,
                                                             @PathVariable String token) {
         Map<String, String> response = new HashMap<>();
         ResponseEntity<Map<String, String>> authResult = service.validateToken(token, "admin");

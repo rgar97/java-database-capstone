@@ -1,23 +1,25 @@
 package com.project.back_end.services;
 
-import com.project.back_end.models.Admin;
-import com.project.back_end.models.Doctor;
-import com.project.back_end.models.Patient;
-import com.project.back_end.repository.AdminRepository;
-import com.project.back_end.repository.DoctorRepository;
-import com.project.back_end.repository.PatientRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.Optional;
+import com.project.back_end.models.Admin;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.models.Patient;
+import com.project.back_end.repo.AdminRepository;
+import com.project.back_end.repo.DoctorRepository;
+import com.project.back_end.repo.PatientRepository;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @Component
 public class TokenService {
@@ -74,6 +76,15 @@ public class TokenService {
         return claims.getSubject();
     }
 
+    private String extractRole(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
+    }
+
     /**
      * Obtiene el ID numérico del usuario a partir del token (utilizado en servicios).
      */
@@ -91,6 +102,15 @@ public class TokenService {
      */
     public boolean validateToken(String token, String userRole) {
         try {
+            if (token == null || userRole == null || !userRole.matches("(?i)admin|doctor|patient")) {
+                return false;
+            }
+
+            String tokenRole = extractRole(token);
+            if (tokenRole == null || !tokenRole.equalsIgnoreCase(userRole)) {
+                return false;
+            }
+
             String identifier = extractIdentifier(token);
             if (identifier == null || identifier.trim().isEmpty()) {
                 return false;

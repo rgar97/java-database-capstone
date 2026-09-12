@@ -1,17 +1,5 @@
 package com.project.back_end.services;
 
-import com.project.back_end.DTO.Login;
-import com.project.back_end.models.Admin;
-import com.project.back_end.models.Appointment;
-import com.project.back_end.models.Doctor;
-import com.project.back_end.models.Patient;
-import com.project.back_end.repository.AdminRepository;
-import com.project.back_end.repository.DoctorRepository;
-import com.project.back_end.repository.PatientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -19,6 +7,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.project.back_end.DTO.Login;
+import com.project.back_end.models.Admin;
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.models.Patient;
+import com.project.back_end.repo.AdminRepository;
+import com.project.back_end.repo.DoctorRepository;
+import com.project.back_end.repo.PatientRepository;
 
 @org.springframework.stereotype.Service
 public class Service {
@@ -29,6 +31,7 @@ public class Service {
     private final PatientRepository patientRepository;
     private final DoctorService doctorService;
     private final PatientService patientService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public Service(TokenService tokenService,
@@ -36,13 +39,15 @@ public class Service {
                    DoctorRepository doctorRepository,
                    PatientRepository patientRepository,
                    DoctorService doctorService,
-                   PatientService patientService) {
+                   PatientService patientService,
+                   PasswordEncoder passwordEncoder) {
         this.tokenService = tokenService;
         this.adminRepository = adminRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.doctorService = doctorService;
         this.patientService = patientService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -60,6 +65,10 @@ public class Service {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    public Long getUserIdFromToken(String token) {
+        return tokenService.getUserIdFromToken(token);
+    }
+
     /**
      * Valida las credenciales de un administrador y devuelve un token.
      */
@@ -67,7 +76,8 @@ public class Service {
         Map<String, String> response = new HashMap<>();
         Admin admin = adminRepository.findByUsername(receivedAdmin.getUsername());
 
-        if (admin != null && admin.getPassword().equals(receivedAdmin.getPassword())) {
+        if (admin != null && matchesPassword(receivedAdmin.getPassword(), admin.getPassword())) {
+            migratePassword(admin.getPassword(), receivedAdmin.getPassword(), admin);
             String token = tokenService.generateToken(admin.getId(), "admin");
             response.put("token", token);
             response.put("role", "admin");
@@ -111,11 +121,14 @@ public class Service {
      * Valida si un horario de cita está libre para un doctor.
      */
     public int validateAppointment(Appointment appointment) {
-        if (appointment == null || appointment.getDoctor() == null) {
+        if (appointment == null || appointment.getDoctor() == null || appointment.getAppointmentTime() == null) {
             return -1;
         }
 
         Long doctorId = appointment.getDoctor().getId();
+        if (doctorId == null) {
+            return -1;
+        }
         Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
         if (doctorOpt.isEmpty()) {
             return -1;
@@ -145,7 +158,8 @@ public class Service {
         Map<String, String> response = new HashMap<>();
         Patient patient = patientRepository.findByEmail(login.getIdentifier());
 
-        if (patient != null && patient.getPassword().equals(login.getPassword())) {
+        if (patient != null && matchesPassword(login.getPassword(), patient.getPassword())) {
+            migratePassword(patient.getPassword(), login.getPassword(), patient);
             String token = tokenService.generateToken(patient.getId(), "patient");
             response.put("token", token);
             response.put("role", "patient");
@@ -179,5 +193,28 @@ public class Service {
         }
 
         return patientService.getPatientAppointment(patientId, token);
+    }
+
+    private boolean matchesPassword(String rawPassword, String storedPassword) {
+        if (rawPassword == null || storedPassword == null) {
+            return false;
+        }
+
+        return storedPassword.startsWith("$2")
+                ? passwordEncoder.matches(rawPassword, storedPassword)
+                : storedPassword.equals(rawPassword);
+    }
+
+    private void migratePassword(String storedPassword, String rawPassword, Object user) {
+        if (storedPassword == null || !storedPassword.startsWith("$2")) {
+            String encodedPassword = passwordEncoder.encode(rawPassword);
+            if (user instanceof Admin admin) {
+                admin.setPassword(encodedPassword);
+                adminRepository.save(admin);
+            } else if (user instanceof Patient patient) {
+                patient.setPassword(encodedPassword);
+                patientRepository.save(patient);
+            }
+        }
     }
 }

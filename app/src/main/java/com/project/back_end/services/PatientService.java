@@ -1,19 +1,21 @@
 package com.project.back_end.services;
 
-import com.project.back_end.DTO.AppointmentDTO;
-import com.project.back_end.models.Appointment;
-import com.project.back_end.models.Patient;
-import com.project.back_end.repository.AppointmentRepository;
-import com.project.back_end.repository.PatientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.project.back_end.DTO.AppointmentDTO;
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Patient;
+import com.project.back_end.repo.AppointmentRepository;
+import com.project.back_end.repo.PatientRepository;
 
 @Service
 public class PatientService {
@@ -27,6 +29,9 @@ public class PatientService {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     /**
      * 1. Guarda un nuevo paciente en la base de datos.
      */
@@ -35,6 +40,7 @@ public class PatientService {
             if (patient == null) {
                 return 0;
             }
+            patient.setPassword(passwordEncoder.encode(patient.getPassword()));
             patientRepository.save(patient);
             return 1;
         } catch (Exception e) {

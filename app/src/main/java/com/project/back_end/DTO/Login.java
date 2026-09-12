@@ -1,8 +1,13 @@
 package com.project.back_end.DTO;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class Login {
 
+    @NotBlank(message = "El identificador es requerido")
     private String identifier;
+
+    @NotBlank(message = "La contraseña es requerida")
     private String password;
 
     public Login() {

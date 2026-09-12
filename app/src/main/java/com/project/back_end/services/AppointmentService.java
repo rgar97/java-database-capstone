@@ -1,21 +1,25 @@
 package com.project.back_end.services;
 
-import com.project.back_end.models.Appointment;
-import com.project.back_end.repository.AppointmentRepository;
-import com.project.back_end.repository.DoctorRepository;
-import com.project.back_end.repository.PatientRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.models.Patient;
+import com.project.back_end.repo.AppointmentRepository;
+import com.project.back_end.repo.DoctorRepository;
+import com.project.back_end.repo.PatientRepository;
 
 @Service
 public class AppointmentService {
@@ -37,9 +41,27 @@ public class AppointmentService {
      */
     public int bookAppointment(Appointment appointment) {
         try {
-            if (appointment == null) {
+            if (appointment == null || appointment.getDoctor() == null || appointment.getPatient() == null
+                    || appointment.getDoctor().getId() == null || appointment.getPatient().getId() == null
+                    || appointment.getAppointmentTime() == null || !appointment.getAppointmentTime().isAfter(LocalDateTime.now())) {
                 return 0;
             }
+
+            Optional<Doctor> doctor = doctorRepository.findById(appointment.getDoctor().getId());
+            Optional<Patient> patient = patientRepository.findById(appointment.getPatient().getId());
+            if (doctor.isEmpty() || patient.isEmpty()) {
+                return 0;
+            }
+
+            String requestedSlot = appointment.getAppointmentTime()
+                    .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
+            if (doctor.get().getAvailableTimes() == null
+                    || !doctor.get().getAvailableTimes().contains(requestedSlot)
+                    || appointmentRepository.existsByDoctorIdAndAppointmentTime(
+                    doctor.get().getId(), appointment.getAppointmentTime())) {
+                return 0;
+            }
+
             appointmentRepository.save(appointment);
             return 1;
         } catch (Exception e) {
@@ -88,6 +110,11 @@ public class AppointmentService {
 
         try {
             Appointment appointment = appointmentOpt.get();
+            if (!isAuthorizedForAppointment(appointment, token)) {
+                response.put("message", "No está autorizado para cancelar esta cita.");
+                return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            }
+
             appointmentRepository.delete(appointment);
             response.put("message", "Cita cancelada exitosamente.");
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -104,6 +131,11 @@ public class AppointmentService {
         Map<String, Object> response = new HashMap<>();
 
         try {
+            if (!tokenService.validateToken(token, "doctor") || date == null) {
+                response.put("message", "Token o fecha inválidos.");
+                return response;
+            }
+
             Long doctorId = tokenService.getUserIdFromToken(token);
             if (doctorId == null) {
                 response.put("message", "Token de autorización inválido.");
@@ -128,5 +160,20 @@ public class AppointmentService {
         }
 
         return response;
+    }
+
+    private boolean isAuthorizedForAppointment(Appointment appointment, String token) {
+        Long userId = tokenService.getUserIdFromToken(token);
+        if (userId == null) {
+            return false;
+        }
+
+        boolean isDoctor = tokenService.validateToken(token, "doctor")
+                && appointment.getDoctor() != null
+                && userId.equals(appointment.getDoctor().getId());
+        boolean isPatient = tokenService.validateToken(token, "patient")
+                && appointment.getPatient() != null
+                && userId.equals(appointment.getPatient().getId());
+        return isDoctor || isPatient;
     }
 }

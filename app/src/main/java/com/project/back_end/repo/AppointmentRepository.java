@@ -1,20 +1,19 @@
-package com.project.back_end.repository;
-
-import com.project.back_end.models.Appointment;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+package com.project.back_end.repo;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.project.back_end.models.Appointment;
+
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
 
-    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.doctor d LEFT JOIN FETCH d.availability WHERE d.id = :doctorId AND a.appointmentTime BETWEEN :start AND :end")
+    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.doctor d LEFT JOIN FETCH d.availableTimes WHERE d.id = :doctorId AND a.appointmentTime BETWEEN :start AND :end")
     List<Appointment> findByDoctorIdAndAppointmentTimeBetween(@Param("doctorId") Long doctorId,
                                                                @Param("start") LocalDateTime start,
                                                                @Param("end") LocalDateTime end);
@@ -30,6 +29,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     void deleteAllByDoctorId(Long doctorId);
 
     List<Appointment> findByPatientId(Long patientId);
+
+    boolean existsByDoctorIdAndAppointmentTime(Long doctorId, LocalDateTime appointmentTime);
 
     List<Appointment> findByPatient_IdAndStatusOrderByAppointmentTimeAsc(Long patientId, int status);
 

@@ -1,21 +1,28 @@
 package com.project.back_end.services;
 
-import com.project.back_end.DTO.Login;
-import com.project.back_end.models.Appointment;
-import com.project.back_end.models.Doctor;
-import com.project.back_end.repository.AppointmentRepository;
-import com.project.back_end.repository.DoctorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import com.project.back_end.DTO.Login;
+import com.project.back_end.models.Appointment;
+import com.project.back_end.models.Doctor;
+import com.project.back_end.repo.AppointmentRepository;
+import com.project.back_end.repo.DoctorRepository;
 
 @Service
 public class DoctorService {
@@ -28,6 +35,9 @@ public class DoctorService {
 
     @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<String> getDoctorAvailability(Long doctorId, LocalDate date) {
         Optional<Doctor> doctorOpt = doctorRepository.findById(doctorId);
@@ -58,6 +68,7 @@ public class DoctorService {
             if (doctorRepository.findByEmail(doctor.getEmail()) != null) {
                 return -1;
             }
+            doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
             doctorRepository.save(doctor);
             return 1;
         } catch (Exception e) {
@@ -69,6 +80,9 @@ public class DoctorService {
         try {
             if (doctor.getId() == null || !doctorRepository.existsById(doctor.getId())) {
                 return -1;
+            }
+            if (doctor.getPassword() != null && !doctor.getPassword().startsWith("$2")) {
+                doctor.setPassword(passwordEncoder.encode(doctor.getPassword()));
             }
             doctorRepository.save(doctor);
             return 1;
@@ -98,7 +112,11 @@ public class DoctorService {
         Map<String, String> response = new HashMap<>();
         Doctor doctor = doctorRepository.findByEmail(login.getIdentifier());
 
-        if (doctor != null && doctor.getPassword().equals(login.getPassword())) {
+        if (doctor != null && matchesPassword(login.getPassword(), doctor.getPassword())) {
+            if (!doctor.getPassword().startsWith("$2")) {
+                doctor.setPassword(passwordEncoder.encode(login.getPassword()));
+                doctorRepository.save(doctor);
+            }
             String token = tokenService.generateToken(doctor.getId(), "doctor");
             response.put("token", token);
             response.put("role", "doctor");
@@ -107,6 +125,16 @@ public class DoctorService {
 
         response.put("message", "Credenciales de doctor inválidas.");
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    private boolean matchesPassword(String rawPassword, String storedPassword) {
+        if (rawPassword == null || storedPassword == null) {
+            return false;
+        }
+
+        return storedPassword.startsWith("$2")
+                ? passwordEncoder.matches(rawPassword, storedPassword)
+                : storedPassword.equals(rawPassword);
     }
 
     public Map<String, Object> findDoctorByName(String name) {
