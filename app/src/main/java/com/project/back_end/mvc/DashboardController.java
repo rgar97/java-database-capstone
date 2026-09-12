@@ -3,6 +3,7 @@ package com.project.back_end.mvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.project.back_end.services.Service;
@@ -14,8 +15,10 @@ public class DashboardController {
     @Autowired
     private Service service;
 
-    @GetMapping("/adminDashboard")
-    public String adminDashboard(@RequestParam String token) {
+    @GetMapping({"/adminDashboard", "/adminDashboard/{token}"})
+    public String adminDashboard(@RequestParam(required = false) String token,
+                                 @PathVariable(required = false) String tokenPath) {
+        token = token != null ? token : tokenPath;
         var validationResult = service.validateToken(token, "admin");
         if (validationResult.getStatusCode().is2xxSuccessful()) {
             return "admin/adminDashboard";
@@ -23,8 +26,10 @@ public class DashboardController {
         return "redirect:/";
     }
 
-    @GetMapping("/doctorDashboard")
-    public String doctorDashboard(@RequestParam String token) {
+    @GetMapping({"/doctorDashboard", "/doctorDashboard/{token}"})
+    public String doctorDashboard(@RequestParam(required = false) String token,
+                                  @PathVariable(required = false) String tokenPath) {
+        token = token != null ? token : tokenPath;
         var validationResult = service.validateToken(token, "doctor");
         if (validationResult.getStatusCode().is2xxSuccessful()) {
             return "doctor/doctorDashboard";
