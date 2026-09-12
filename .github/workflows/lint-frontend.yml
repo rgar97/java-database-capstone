@@ -1,0 +1,36 @@
+name: Lint Frontend Code
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  lint-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install linters globally
+        run: |
+          npm install -g htmlhint stylelint stylelint-config-standard eslint
+
+      - name: Lint HTML files
+        run: |
+          htmlhint "app/src/main/resources/static/assets/pages/**/*.html" || true
+
+      - name: Lint CSS files
+        run: |
+          npx stylelint "app/src/main/resources/static/assets/css/**/*.css" --config '{"extends": "stylelint-config-standard"}' || true
+
+      - name: Lint JS files
+        run: |
+          npx eslint "app/src/main/resources/static/assets/js/**/*.js" --no-eslintrc --env-browser || true
