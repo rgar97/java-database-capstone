@@ -1,6 +1,10 @@
 package com.project.back_end.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -14,8 +18,6 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "doctor")
@@ -47,8 +49,8 @@ public class Doctor {
     private String password;
 
     @NotNull(message = "El número de teléfono es requerido")
-    @Pattern(regexp = "^\\d{12}$", message = "El número de teléfono debe ser de exactamente 12 dígitos")
-    @Column(nullable = false, length = 12)
+    @Pattern(regexp = "^(\\d{10}|\\d{3}-\\d{3}-\\d{4})$", message = "El número de teléfono debe tener 10 dígitos, con o sin guiones")
+    @Column(nullable = false, length = 20)
     private String phone;
 
     @ElementCollection

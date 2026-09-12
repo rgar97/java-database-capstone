@@ -1,6 +1,7 @@
 package com.project.back_end.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,8 +38,8 @@ public class Patient {
     private String password;
 
     @NotNull(message = "El número de teléfono es requerido")
-    @Pattern(regexp = "^\\d{12}$", message = "El número de teléfono debe ser de exactamente 12 dígitos")
-    @Column(nullable = false, length = 12)
+    @Pattern(regexp = "^(\\d{10}|\\d{3}-\\d{3}-\\d{4})$", message = "El número de teléfono debe tener 10 dígitos, con o sin guiones")
+    @Column(nullable = false, length = 20)
     private String phone;
 
     @NotNull(message = "La dirección es requerida")
