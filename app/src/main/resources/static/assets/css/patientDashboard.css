@@ -106,3 +106,41 @@
     filter: brightness(1.2);
     transform: translateY(-1px);
 }
+
+.modalApp h2 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.modalApp label {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 90%;
+    gap: 0.35rem;
+    font-weight: 600;
+}
+
+.close-booking {
+    align-self: flex-end;
+    border: 0;
+    background: transparent;
+    color: #64748b;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.booking-success,
+.booking-error {
+    width: 90%;
+    text-align: center;
+    font-weight: 600;
+}
+
+.booking-success {
+    color: #15803d;
+}
+
+.booking-error {
+    color: #b91c1c;
+}

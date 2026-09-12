@@ -1,4 +1,5 @@
-import { deleteDoctor, getPatientData } from "../services/patientServices.js";
+import { deleteDoctor } from "../services/doctorServices.js";
+import { getPatientData } from "../services/patientServices.js";
 import { showBookingOverlay } from "./modals.js";
 
 /**
@@ -13,7 +14,6 @@ export function createDoctorCard(doctor) {
 
     // Obtener el rol del usuario desde localStorage
     const role = localStorage.getItem("userRole");
-
     // Sección de información del doctor
     const infoDiv = document.createElement("div");
     infoDiv.classList.add("doctor-info");
@@ -28,12 +28,11 @@ export function createDoctorCard(doctor) {
     email.textContent = `Correo: ${doctor.email || "No disponible"}`;
 
     const availability = document.createElement("p");
-    const availabilityText = Array.isArray(doctor.availability)
-        ? doctor.availability.join(", ")
-        : doctor.availability || "Consultar disponibilidad";
+    const availableTimes = doctor.availableTimes || doctor.availability;
+    const availabilityText = Array.isArray(availableTimes)
+        ? availableTimes.join(", ")
+        : availableTimes || "Consultar disponibilidad";
     availability.textContent = `Horario: ${availabilityText}`;
-
-    // Añadir elementos de información al contenedor
     infoDiv.appendChild(name);
     infoDiv.appendChild(specialization);
     infoDiv.appendChild(email);

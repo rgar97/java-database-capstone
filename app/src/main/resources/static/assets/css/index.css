@@ -6,6 +6,12 @@
 }
 
 html, body {
+    body {
+        overflow-x: hidden;
+    }
+    body.modal-open {
+        overflow: hidden;
+    }
     height: 100%;
     font-family: 'Roboto', sans-serif;
     color: #333333;
@@ -19,21 +25,95 @@ html, body {
     flex-direction: column;
 }
 
+    .main-content::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(248, 250, 252, 0.55);
+        pointer-events: none;
+    }
+    .main-content > * {
+        position: relative;
+        z-index: 1;
+    }
 .wrapper {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-height: 100vh;
-}
+        width: min(420px, calc(100% - 2rem));
+        min-height: 260px;
 
 /* Área de Contenido Principal */
 .main-content {
+    #modal-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    #modal-body h2 {
+        margin: 0 2rem 0 0;
+        color: #2c3e50;
+        font-size: 1.4rem;
+    }
+    #modal-body form {
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+    }
+    #modal-body label {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        color: #34495e;
+        font-size: 0.92rem;
+        font-weight: 600;
+    }
+    #modal-body input[type="text"],
+    #modal-body input[type="email"],
+    #modal-body input[type="password"] {
+        width: 100%;
+        min-height: 44px;
+        padding: 0.7rem 0.8rem;
+        border: 1px solid #cbd5e1;
+        border-radius: 5px;
+        background: #ffffff;
+        color: #1e293b;
+        font: inherit;
+    }
+    #modal-body input:focus {
+        border-color: #2563eb;
+        outline: 2px solid rgba(37, 99, 235, 0.18);
+    }
+    #modal-body button[type="submit"] {
+        min-height: 44px;
+        margin-top: 0.25rem;
+        padding: 0.7rem 1rem;
+        border: 0;
+        border-radius: 5px;
+        background: #2563eb;
+        color: #ffffff;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 700;
+    }
+    #modal-body button[type="submit"]:hover {
+        background: #1d4ed8;
+    }
+    #roleLoginError {
+        min-height: 1.25rem;
+        margin: 0;
+        color: #b91c1c;
+        font-size: 0.9rem;
+    }
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 2rem;
+        .main-content {
+            background-attachment: scroll;
+        }
     background-image: url('../images/defineRole/index.png');
     background-size: cover;
     background-position: center;

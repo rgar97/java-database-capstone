@@ -1,4 +1,6 @@
 
+import { bookAppointment } from "../services/patientServices.js";
+
 export function openModal(type) {
     const modal = document.getElementById("modal");
     const body = document.getElementById("modal-body");
@@ -55,8 +57,49 @@ export function closeModal() {
     if (body) body.replaceChildren();
 }
 
-export function showBookingOverlay() {
-    alert("La reserva de citas todavía no está disponible en el backend.");
+export function showBookingOverlay(event, doctor, patientData) {
+    const patient = patientData?.patient || patientData;
+    const availableTimes = Array.isArray(doctor.availableTimes) ? doctor.availableTimes : [];
+    const overlay = document.createElement("div");
+    overlay.className = "modalApp active";
+    overlay.innerHTML = `
+        <button type="button" class="close-booking" aria-label="Cerrar">&times;</button>
+        <h2>Reservar cita con ${doctor.name || "el doctor"}</h2>
+        <form id="bookingForm">
+            <label>Fecha <input id="bookingDate" type="date" required></label>
+            <label>Hora
+                <select id="bookingTime" required>
+                    <option value="">Selecciona una hora</option>
+                    ${availableTimes.map(time => `<option value="${time}">${time}</option>`).join("")}
+                </select>
+            </label>
+            <button type="submit" class="btn-confirm-booking">Confirmar reserva</button>
+            <p id="bookingMessage" role="alert"></p>
+        </form>
+    `;
+    document.body.appendChild(overlay);
+
+    const dateInput = overlay.querySelector("#bookingDate");
+    const today = new Date();
+    const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+    dateInput.min = localDate;
+
+    const close = () => overlay.remove();
+    overlay.querySelector(".close-booking").addEventListener("click", close);
+    overlay.querySelector("#bookingForm").addEventListener("submit", async (submitEvent) => {
+        submitEvent.preventDefault();
+        const date = dateInput.value;
+        const time = overlay.querySelector("#bookingTime").value;
+        const message = overlay.querySelector("#bookingMessage");
+        const result = await bookAppointment(doctor.id, patient?.id, `${date}T${time}:00`, localStorage.getItem("token"));
+        message.textContent = result.message;
+        if (result.success) {
+            message.className = "booking-success";
+            setTimeout(close, 900);
+        } else {
+            message.className = "booking-error";
+        }
+    });
 }
 
 window.openModal = openModal;

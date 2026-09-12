@@ -42,11 +42,24 @@ async function loadDoctorCards() {
 
     try {
         const doctors = await getDoctors();
+        populateSpecialties(doctors);
         renderDoctorCards(doctors);
     } catch (error) {
         console.error("Error al cargar tarjetas de médicos:", error);
         contentDiv.innerHTML = "<p>Ocurrió un error al cargar la lista de médicos.</p>";
     }
+}
+
+function populateSpecialties(doctors) {
+    const specialtySelect = document.getElementById("filterSpecialty") || document.getElementById("filterBySpecialty");
+    if (!specialtySelect) return;
+
+    const specialties = [...new Set((doctors || [])
+        .map(doctor => doctor.specialty)
+        .filter(Boolean))].sort((first, second) => first.localeCompare(second));
+
+    specialtySelect.replaceChildren(new Option("Todas las especialidades", ""));
+    specialties.forEach(specialty => specialtySelect.add(new Option(specialty, specialty)));
 }
 
 /**
@@ -126,7 +139,12 @@ async function adminAddDoctor(e) {
     };
 
     // Validar campos obligatorios
-    if (!newDoctor.name || !newDoctor.email || !newDoctor.password) {
+    const validPhone = /^(\d{10}|\d{3}-\d{3}-\d{4})$/.test(newDoctor.phone);
+    if (!newDoctor.name || !newDoctor.specialty || !newDoctor.email || !newDoctor.password || !validPhone) {
+        if (!validPhone) {
+            alert("El teléfono debe tener 10 dígitos, con o sin guiones.");
+            return;
+        }
         alert("Por favor, complete todos los campos obligatorios.");
         return;
     }

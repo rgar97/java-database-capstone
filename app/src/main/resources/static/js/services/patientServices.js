@@ -2,6 +2,7 @@ import { API_BASE_URL } from "../config/config.js";
 
 // Endpoint base para las operaciones de pacientes
 const PATIENT_API = API_BASE_URL + '/patient';
+const APPOINTMENT_API = API_BASE_URL + '/appointment';
 
 /**
  * Registra un nuevo paciente en la plataforma.
@@ -169,5 +170,30 @@ export async function filterAppointments(condition, name, token) {
         console.error("Error inesperado en filterAppointments:", error);
         alert("Ocurrió un error de red al intentar filtrar las citas.");
         return [];
+    }
+}
+
+export async function bookAppointment(doctorId, patientId, appointmentTime, token) {
+    try {
+        const response = await fetch(`${APPOINTMENT_API}/${encodeURIComponent(token)}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                doctor: { id: doctorId },
+                patient: { id: patientId },
+                appointmentTime,
+                status: 0
+            })
+        });
+        const data = await response.json().catch(() => ({}));
+        return {
+            success: response.ok,
+            message: data.message || (response.ok
+                ? "Cita reservada correctamente."
+                : "No se pudo reservar la cita.")
+        };
+    } catch (error) {
+        console.error("Error al reservar la cita:", error);
+        return { success: false, message: "No se pudo conectar con el servidor." };
     }
 }

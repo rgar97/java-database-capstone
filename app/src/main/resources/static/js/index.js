@@ -1,10 +1,12 @@
 const API_BASE_URL = "/api";
 
 window.selectRole = function (role) {
+    document.body.classList.add("modal-open");
     if (role === "patient") {
         localStorage.setItem("userRole", "patient");
         window.location.href = "/pages/patientDashboard.html";
         return;
+    document.body.classList.remove("modal-open");
     }
 
     if (role === "admin" || role === "doctor") {
@@ -33,6 +35,7 @@ function showLoginForm(role) {
         </form>
     `;
     modal.style.display = "flex";
+    document.body.classList.add("modal-open");
 
     document.getElementById("closeModal").onclick = closeLoginForm;
     document.getElementById("roleLoginForm").addEventListener("submit", (event) => {
@@ -74,4 +77,5 @@ function closeLoginForm() {
     const modalBody = document.getElementById("modal-body");
     if (modal) modal.style.display = "none";
     if (modalBody) modalBody.replaceChildren();
+    document.body.classList.remove("modal-open");
 }

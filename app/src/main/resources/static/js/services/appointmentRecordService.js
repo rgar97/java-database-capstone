@@ -17,6 +17,10 @@ export async function getAllAppointments(date, patientName, token) {
             throw new Error(data.message || `Error al obtener citas: ${response.status}`);
         }
 
+        if (data.message && !data.appointments) {
+            throw new Error(data.message);
+        }
+
         return Array.isArray(data) ? data : (data.appointments || []);
     } catch (error) {
         console.error("Error al obtener las citas del doctor:", error);

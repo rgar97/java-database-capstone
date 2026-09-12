@@ -1,5 +1,6 @@
-import { getPatientData, deleteDoctor } from "./patientServices.js";
+import { deleteDoctor } from "./doctorServices.js";
 import { showBookingOverlay } from "./modals.js";
+import { getPatientData } from "./patientServices.js";
 
 /**
  * Crea una tarjeta dinámica reutilizable para mostrar información del doctor.

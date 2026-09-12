@@ -3,9 +3,17 @@ import { getAllAppointments } from "./services/appointmentRecordService.js";
 
 // Inicializar Variables Globales
 let patientTableBody = null;
-let selectedDate = new Date().toISOString().split("T")[0]; // Fecha actual en formato YYYY-MM-DD
+let selectedDate = getLocalDate();
 let token = localStorage.getItem("token") || "";
 let patientName = null;
+let requestVersion = 0;
+
+function getLocalDate() {
+    const today = new Date();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
+    return `${today.getFullYear()}-${month}-${day}`;
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     // Referencia al cuerpo de la tabla de citas
@@ -35,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const todayButton = document.getElementById("todayButton") || document.getElementById("todayAppointmentsBtn");
     if (todayButton) {
         todayButton.addEventListener("click", () => {
-            selectedDate = new Date().toISOString().split("T")[0];
+            selectedDate = getLocalDate();
             if (datePicker) {
                 datePicker.value = selectedDate;
             }
@@ -56,6 +64,8 @@ async function loadAppointments() {
         if (!patientTableBody) return;
     }
 
+    const currentRequest = ++requestVersion;
+
     // Limpiar contenido existente de la tabla
     patientTableBody.innerHTML = "";
 
@@ -65,12 +75,13 @@ async function loadAppointments() {
 
         // Obtener citas desde el servicio
         const appointments = await getAllAppointments(selectedDate, patientName, token);
+        if (currentRequest !== requestVersion) return;
 
         // Si no se encuentran citas o la lista está vacía
         if (!appointments || appointments.length === 0) {
             const emptyRow = document.createElement("tr");
             emptyRow.innerHTML = `
-                <td colspan="6" style="text-align: center; padding: 20px;">
+                <td colspan="5" style="text-align: center; padding: 20px;">
                     No se encontraron citas para la fecha seleccionada.
                 </td>
             `;
@@ -93,7 +104,7 @@ async function loadAppointments() {
         patientTableBody.innerHTML = "";
         const errorRow = document.createElement("tr");
         errorRow.innerHTML = `
-            <td colspan="6" style="text-align: center; color: red; padding: 20px;">
+            <td colspan="5" style="text-align: center; color: red; padding: 20px;">
                 Ocurrió un error al cargar las citas. Por favor, inténtelo de nuevo más tarde.
             </td>
         `;

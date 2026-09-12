@@ -122,7 +122,6 @@ export async function filterDoctors(name, time, specialty) {
         return Array.isArray(data) ? data : (data.doctors || []);
     } catch (error) {
         console.error("Error al filtrar la lista de médicos:", error);
-        alert("Ocurrió un error al aplicar los filtros. Intente nuevamente.");
         return [];
     }
 }

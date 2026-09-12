@@ -50,18 +50,18 @@ function renderHeader() {
     // Inyección condicional según el rol de usuario
     if (role === "admin") {
         headerContent += `
-            <button id="addDocBtn" class="adminBtn" onclick="openModal('addDoctor')">Agregar Doctor</button>
+            <button id="addDocBtn" class="adminBtn">Agregar Doctor</button>
             <a href="#" onclick="logout()">Cerrar sesión</a>
         `;
     } else if (role === "doctor") {
         headerContent += `
-            <a href="/templates/doctor/doctorDashboard.html">Inicio</a>
+            <a href="/doctorDashboard">Inicio</a>
             <a href="#" onclick="logout()">Cerrar sesión</a>
         `;
     } else if (role === "patient") {
         headerContent += `
-            <button id="loginBtn" class="btn-nav" onclick="openModal('login')">Iniciar sesión</button>
-            <button id="registerBtn" class="btn-nav" onclick="openModal('register')">Registrarse</button>
+            <button id="loginBtn" class="btn-nav">Iniciar sesión</button>
+            <button id="registerBtn" class="btn-nav">Registrarse</button>
         `;
     } else if (role === "loggedPatient") {
         headerContent += `
@@ -91,12 +91,12 @@ function attachHeaderButtonListeners() {
 
     const loginBtn = document.getElementById("loginBtn");
     if (loginBtn && typeof window.openModal === "function") {
-        loginBtn.addEventListener("click", () => window.openModal("login"));
+        loginBtn.addEventListener("click", () => window.openModal("patientLogin"));
     }
 
     const registerBtn = document.getElementById("registerBtn");
     if (registerBtn && typeof window.openModal === "function") {
-        registerBtn.addEventListener("click", () => window.openModal("register"));
+        registerBtn.addEventListener("click", () => window.openModal("patientSignup"));
     }
 }
 

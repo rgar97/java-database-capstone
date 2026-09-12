@@ -1,5 +1,5 @@
 import { createDoctorCard } from "./components/doctorCard.js";
-import { openModal } from "./components/modals.js";
+import { closeModal, openModal } from "./components/modals.js";
 import { filterDoctors, getDoctors } from "./services/doctorServices.js";
 import { patientLogin, patientSignup } from "./services/patientServices.js";
 
@@ -28,6 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (filterSpecialty) filterSpecialty.addEventListener("change", filterDoctorsOnChange);
 });
 
+function populateSpecialties(doctors) {
+    const specialtySelect = document.getElementById("filterSpecialty");
+    if (!specialtySelect) return;
+
+    const specialties = [...new Set((doctors || [])
+        .map(doctor => doctor.specialty)
+        .filter(Boolean))].sort((first, second) => first.localeCompare(second));
+    specialtySelect.replaceChildren(new Option("Todas las especialidades", ""));
+    specialties.forEach(specialty => specialtySelect.add(new Option(specialty, specialty)));
+}
+
 /**
  * Obtiene todos los médicos desde el backend y los renderiza en la vista.
  */
@@ -39,6 +50,7 @@ async function loadDoctorCards() {
 
     try {
         const doctors = await getDoctors();
+        populateSpecialties(doctors);
         renderDoctorCards(doctors);
     } catch (error) {
         console.error("Error al obtener la lista de médicos:", error);
@@ -85,7 +97,7 @@ export function renderDoctorCards(doctors) {
     contentDiv.innerHTML = "";
 
     if (!doctors || doctors.length === 0) {
-        contentDiv.innerHTML = "<p>No doctors found with the given filters.</p>";
+        contentDiv.innerHTML = "<p>No se encontraron médicos con esos filtros.</p>";
         return;
     }
 
@@ -115,7 +127,12 @@ window.signupPatient = async function (event) {
         address: addressInput ? addressInput.value.trim() : ""
     };
 
-    if (!patientData.name || !patientData.email || !patientData.password) {
+    const validPhone = /^(\d{10}|\d{3}-\d{3}-\d{4})$/.test(patientData.phone);
+    if (!patientData.name || !patientData.email || !patientData.password || !patientData.address || !validPhone) {
+        if (!validPhone) {
+            alert("El teléfono debe tener 10 dígitos, con o sin guiones.");
+            return;
+        }
         alert("Por favor, complete todos los campos requeridos.");
         return;
     }
@@ -127,11 +144,7 @@ window.signupPatient = async function (event) {
             alert(response.message || "Registro exitoso.");
             
             // Cerrar el modal
-            const modalContainer = document.getElementById("modalContainer") || document.getElementById("modal");
-            if (modalContainer) {
-                modalContainer.innerHTML = "";
-                modalContainer.classList.add("hidden");
-            }
+            closeModal();
 
             // Recargar la página para actualizar el estado
             window.location.reload();
