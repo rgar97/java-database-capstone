@@ -41,7 +41,7 @@ function renderHeader() {
         <header class="header">
             <div class="logo-container">
                 <a href="/">
-                    <img src="../assets/images/logo/logo.png" alt="CMS Logo" class="logo" onerror="this.src='/assets/images/logo/logo.png'" />
+                    <span class="brand-mark" aria-label="Clinic Management System">CMS</span>
                 </a>
             </div>
             <nav class="nav-links">

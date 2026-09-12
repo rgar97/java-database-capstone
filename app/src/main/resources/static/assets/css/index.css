@@ -1,259 +1,235 @@
-/* Restablecimiento global */
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 
-html, body {
-    body {
-        overflow-x: hidden;
-    }
-    body.modal-open {
-        overflow: hidden;
-    }
-    height: 100%;
-    font-family: 'Roboto', sans-serif;
-    color: #333333;
-    background-color: #f4f7f6;
+html,
+body {
+    min-height: 100%;
 }
 
-/* Layout Principal */
-.container {
+body {
+    margin: 0;
+    overflow-x: hidden;
+    color: #243447;
+    background: #eaf2f7;
+    font-family: Arial, sans-serif;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+
+.container,
+.wrapper {
     min-height: 100vh;
+}
+
+.container {
     display: flex;
     flex-direction: column;
 }
 
-    .main-content::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: rgba(248, 250, 252, 0.55);
-        pointer-events: none;
-    }
-    .main-content > * {
-        position: relative;
-        z-index: 1;
-    }
 .wrapper {
     display: flex;
-    flex-direction: column;
     flex: 1;
-        width: min(420px, calc(100% - 2rem));
-        min-height: 260px;
-
-/* Área de Contenido Principal */
-.main-content {
-    #modal-body {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-    #modal-body h2 {
-        margin: 0 2rem 0 0;
-        color: #2c3e50;
-        font-size: 1.4rem;
-    }
-    #modal-body form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.85rem;
-    }
-    #modal-body label {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-        color: #34495e;
-        font-size: 0.92rem;
-        font-weight: 600;
-    }
-    #modal-body input[type="text"],
-    #modal-body input[type="email"],
-    #modal-body input[type="password"] {
-        width: 100%;
-        min-height: 44px;
-        padding: 0.7rem 0.8rem;
-        border: 1px solid #cbd5e1;
-        border-radius: 5px;
-        background: #ffffff;
-        color: #1e293b;
-        font: inherit;
-    }
-    #modal-body input:focus {
-        border-color: #2563eb;
-        outline: 2px solid rgba(37, 99, 235, 0.18);
-    }
-    #modal-body button[type="submit"] {
-        min-height: 44px;
-        margin-top: 0.25rem;
-        padding: 0.7rem 1rem;
-        border: 0;
-        border-radius: 5px;
-        background: #2563eb;
-        color: #ffffff;
-        cursor: pointer;
-        font: inherit;
-        font-weight: 700;
-    }
-    #modal-body button[type="submit"]:hover {
-        background: #1d4ed8;
-    }
-    #roleLoginError {
-        min-height: 1.25rem;
-        margin: 0;
-        color: #b91c1c;
-        font-size: 0.9rem;
-    }
-    flex: 1;
-    display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-        .main-content {
-            background-attachment: scroll;
-        }
-    background-image: url('../images/defineRole/index.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
 }
 
-/* Encabezados y Selección de Roles */
+.main-content {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 520px;
+    padding: 3rem 1.5rem;
+    isolation: isolate;
+    background-image: url('../images/defineRole/index.png');
+    background-position: center;
+    background-size: cover;
+}
+
+.main-content::before {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    content: "";
+    background: rgba(248, 250, 252, 0.72);
+}
+
 .main-content h2 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin-bottom: 2rem;
-    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin: 0 0 2rem;
+    color: #1e3a5f;
+    font-size: clamp(1.7rem, 4vw, 2.35rem);
+    text-align: center;
 }
 
 .role-selection {
     display: flex;
-    gap: 1.5rem;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 1rem;
 }
 
-/* Botones y Estilos Interactivos */
-.btn-role, .dashboard-btn {
-    padding: 0.8rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #ffffff;
-    background-color: #007bff;
-    border: none;
+.btn-role,
+.dashboard-btn {
+    min-width: 140px;
+    min-height: 48px;
+    padding: 0.8rem 1.5rem;
+    border: 0;
     border-radius: 6px;
+    color: #ffffff;
+    background: #2563eb;
+    box-shadow: 0 4px 10px rgba(30, 64, 175, 0.2);
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font: inherit;
+    font-weight: 700;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.btn-role:hover, .dashboard-btn:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+.btn-role:hover,
+.dashboard-btn:hover {
+    background: #1d4ed8;
+    box-shadow: 0 6px 14px rgba(30, 64, 175, 0.28);
 }
 
-.btn-role:focus, .dashboard-btn:focus, .input-field:focus, .select-dropdown:focus {
-    outline: 2px solid #80bdff;
+.btn-role:focus-visible,
+.dashboard-btn:focus-visible,
+.input-field:focus-visible,
+.select-dropdown:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.35);
     outline-offset: 2px;
 }
 
-/* Entradas de Formulario */
-.input-field, .select-dropdown {
+.input-field,
+.select-dropdown {
     width: 100%;
     padding: 0.75rem 1rem;
-    font-size: 1rem;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    transition: border-color 0.2s ease-in-out;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font: inherit;
 }
 
-.input-field:hover, .select-dropdown:hover {
-    border-color: #adb5bd;
-}
-
-.checkbox-group {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 1rem 0;
-}
-
-/* Componente Header */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.header img {
-    height: 40px;
-    width: auto;
-}
-
-/* Componente Footer */
-.footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    background-color: #2c3e50;
-    color: #ffffff;
-    margin-top: auto;
-}
-
-@media (max-width: 768px) {
-    .footer, .header {
-        flex-direction: column;
-        gap: 1rem;
-        text-align: center;
-    }
-}
-
-/* Modal e Interacciones */
 .modal {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     z-index: 1000;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(15, 23, 42, 0.58);
 }
 
 .modal-content {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
     position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: min(420px, 100%);
+    min-height: 260px;
+    padding: 2rem;
+    border: 1px solid #dbe3ec;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.24);
 }
 
-#closeModal, .close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: transparent;
-    border: none;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: #6c757d;
+#modal-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+#modal-body h2 {
+    margin: 0 2rem 0 0;
+    color: #1e3a5f;
+    font-size: 1.35rem;
+}
+
+#modal-body form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+#modal-body label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    color: #334155;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+#modal-body input[type="text"],
+#modal-body input[type="email"],
+#modal-body input[type="password"] {
+    width: 100%;
+    min-height: 44px;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #1e293b;
+    font: inherit;
+}
+
+#modal-body input:focus {
+    border-color: #2563eb;
+    outline: 2px solid rgba(37, 99, 235, 0.18);
+}
+
+#modal-body button[type="submit"] {
+    min-height: 44px;
+    margin-top: 0.25rem;
+    padding: 0.7rem 1rem;
+    border: 0;
+    border-radius: 5px;
+    color: #ffffff;
+    background: #2563eb;
     cursor: pointer;
-    transition: color 0.2s ease;
+    font: inherit;
+    font-weight: 700;
 }
 
-#closeModal:hover, .close:hover {
-    color: #dc3545;
+#modal-body button[type="submit"]:hover {
+    background: #1d4ed8;
+}
+
+#roleLoginError {
+    min-height: 1.25rem;
+    margin: 0;
+    color: #b91c1c;
+    font-size: 0.9rem;
+}
+
+#closeModal {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.9rem;
+    border: 0;
+    color: #64748b;
+    background: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#closeModal:hover {
+    color: #b91c1c;
+}
+
+@media (max-width: 640px) {
+    .main-content {
+        min-height: 460px;
+        padding: 2rem 1rem;
+        background-position: 60% center;
+    }
+
+    .role-selection {
+        width: min(280px, 100%);
+        flex-direction: column;
+    }
+
+    .btn-role {
+        width: 100%;
+    }
 }

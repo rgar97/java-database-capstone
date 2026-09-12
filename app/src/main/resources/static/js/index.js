@@ -1,12 +1,10 @@
 const API_BASE_URL = "/api";
 
 window.selectRole = function (role) {
-    document.body.classList.add("modal-open");
     if (role === "patient") {
         localStorage.setItem("userRole", "patient");
         window.location.href = "/pages/patientDashboard.html";
         return;
-    document.body.classList.remove("modal-open");
     }
 
     if (role === "admin" || role === "doctor") {
