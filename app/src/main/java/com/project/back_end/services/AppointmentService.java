@@ -56,7 +56,8 @@ public class AppointmentService {
             String requestedSlot = appointment.getAppointmentTime()
                     .toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"));
             if (doctor.get().getAvailableTimes() == null
-                    || !doctor.get().getAvailableTimes().contains(requestedSlot)
+                    || doctor.get().getAvailableTimes().stream()
+                    .noneMatch(slot -> startsAt(slot, requestedSlot))
                     || appointmentRepository.existsByDoctorIdAndAppointmentTime(
                     doctor.get().getId(), appointment.getAppointmentTime())) {
                 return 0;
@@ -67,6 +68,15 @@ public class AppointmentService {
         } catch (Exception e) {
             return 0;
         }
+    }
+
+    private boolean startsAt(String configuredSlot, String requestedSlot) {
+        if (configuredSlot == null || requestedSlot == null) {
+            return false;
+        }
+
+        String start = configuredSlot.trim().split("-")[0].trim();
+        return start.equals(requestedSlot);
     }
 
     /**
