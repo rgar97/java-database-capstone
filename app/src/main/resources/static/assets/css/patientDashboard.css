@@ -144,3 +144,22 @@
 .booking-error {
     color: #b91c1c;
 }
+
+.appointments-page {
+    justify-content: flex-start;
+    padding-top: 3rem;
+}
+
+.appointments-page h1 {
+    color: #1e3a5f;
+}
+
+.appointments-state {
+    width: min(100%, 900px);
+    padding: 2rem;
+    border: 1px solid #dbe3ec;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #475569;
+    text-align: center;
+}

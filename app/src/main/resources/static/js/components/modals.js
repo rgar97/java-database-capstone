@@ -59,7 +59,9 @@ export function closeModal() {
 
 export function showBookingOverlay(event, doctor, patientData) {
     const patient = patientData?.patient || patientData;
-    const availableTimes = Array.isArray(doctor.availableTimes) ? doctor.availableTimes : [];
+    const availableTimes = Array.isArray(doctor.availableTimes)
+        ? doctor.availableTimes
+        : (Array.isArray(doctor.availability) ? doctor.availability : []);
     const overlay = document.createElement("div");
     overlay.className = "modalApp active";
     overlay.innerHTML = `
@@ -84,14 +86,41 @@ export function showBookingOverlay(event, doctor, patientData) {
     const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
     dateInput.min = localDate;
 
+    const timeSelect = overlay.querySelector("#bookingTime");
+    const refreshAvailableTimes = () => {
+        const selectedDate = dateInput.value;
+        const now = new Date();
+        const isToday = selectedDate === localDate;
+        const validTimes = availableTimes.filter((time) => {
+            if (!isToday) return true;
+            const [hours, minutes] = String(time).split(":").map(Number);
+            return hours > now.getHours()
+                || (hours === now.getHours() && minutes > now.getMinutes());
+        });
+
+        timeSelect.replaceChildren(new Option("Selecciona una hora", ""));
+        validTimes.forEach(time => timeSelect.add(new Option(time, time)));
+        if (validTimes.length === 0 && isToday) {
+            timeSelect.add(new Option("No quedan horarios hoy", ""));
+        }
+    };
+    dateInput.addEventListener("change", refreshAvailableTimes);
+    refreshAvailableTimes();
+
     const close = () => overlay.remove();
     overlay.querySelector(".close-booking").addEventListener("click", close);
     overlay.querySelector("#bookingForm").addEventListener("submit", async (submitEvent) => {
         submitEvent.preventDefault();
         const date = dateInput.value;
-        const time = overlay.querySelector("#bookingTime").value;
+        const time = timeSelect.value;
         const message = overlay.querySelector("#bookingMessage");
-        const result = await bookAppointment(doctor.id, patient?.id, `${date}T${time}:00`, localStorage.getItem("token"));
+        if (!doctor?.id || !patient?.id || !time || !localStorage.getItem("token")) {
+            message.textContent = "Faltan datos de sesión, doctor u horario.";
+            message.className = "booking-error";
+            return;
+        }
+
+        const result = await bookAppointment(doctor.id, patient.id, `${date}T${time}:00`, localStorage.getItem("token"));
         message.textContent = result.message;
         if (result.success) {
             message.className = "booking-success";
