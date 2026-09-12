@@ -62,6 +62,11 @@ export function showBookingOverlay(event, doctor, patientData) {
     const availableTimes = Array.isArray(doctor.availableTimes)
         ? doctor.availableTimes
         : (Array.isArray(doctor.availability) ? doctor.availability : []);
+    const timeSlots = availableTimes.map((slot) => {
+        const label = String(slot).trim();
+        const startTime = label.split("-")[0].trim().slice(0, 5);
+        return { label, startTime };
+    }).filter(slot => /^\d{2}:\d{2}$/.test(slot.startTime));
     const overlay = document.createElement("div");
     overlay.className = "modalApp active";
     overlay.innerHTML = `
@@ -72,7 +77,7 @@ export function showBookingOverlay(event, doctor, patientData) {
             <label>Hora
                 <select id="bookingTime" required>
                     <option value="">Selecciona una hora</option>
-                    ${availableTimes.map(time => `<option value="${time}">${time}</option>`).join("")}
+                    ${timeSlots.map(slot => `<option value="${slot.startTime}">${slot.label}</option>`).join("")}
                 </select>
             </label>
             <button type="submit" class="btn-confirm-booking">Confirmar reserva</button>
@@ -91,15 +96,15 @@ export function showBookingOverlay(event, doctor, patientData) {
         const selectedDate = dateInput.value;
         const now = new Date();
         const isToday = selectedDate === localDate;
-        const validTimes = availableTimes.filter((time) => {
+        const validTimes = timeSlots.filter((slot) => {
             if (!isToday) return true;
-            const [hours, minutes] = String(time).split(":").map(Number);
+            const [hours, minutes] = slot.startTime.split(":").map(Number);
             return hours > now.getHours()
                 || (hours === now.getHours() && minutes > now.getMinutes());
         });
 
         timeSelect.replaceChildren(new Option("Selecciona una hora", ""));
-        validTimes.forEach(time => timeSelect.add(new Option(time, time)));
+        validTimes.forEach(slot => timeSelect.add(new Option(slot.label, slot.startTime)));
         if (validTimes.length === 0 && isToday) {
             timeSelect.add(new Option("No quedan horarios hoy", ""));
         }
