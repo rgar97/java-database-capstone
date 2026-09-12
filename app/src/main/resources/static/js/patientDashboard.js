@@ -167,11 +167,11 @@ window.loginPatient = async function (event) {
     const passwordInput = document.getElementById("loginPassword") || document.getElementById("patientLoginPassword");
 
     const credentials = {
-        email: emailInput ? emailInput.value.trim() : "",
+        identifier: emailInput ? emailInput.value.trim() : "",
         password: passwordInput ? passwordInput.value.trim() : ""
     };
 
-    if (!credentials.email || !credentials.password) {
+    if (!credentials.identifier || !credentials.password) {
         alert("Por favor, ingrese su correo electrónico y contraseña.");
         return;
     }

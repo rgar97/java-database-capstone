@@ -46,7 +46,7 @@ export async function patientSignup(data) {
 
 /**
  * Inicia sesión para un paciente existente.
- * @param {Object} data - Credenciales del paciente (email, password).
+ * @param {Object} data - Credenciales del paciente (identifier, password).
  * @returns {Promise<Response>} Respuesta HTTP completa para ser procesada en el flujo de autenticación.
  */
 export async function patientLogin(data) {
